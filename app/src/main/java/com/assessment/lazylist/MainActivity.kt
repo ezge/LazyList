@@ -113,25 +113,17 @@ fun MainScreen( itemArray: Array<out String>, modifier: Modifier = Modifier) {
 
 @Composable
 fun MyListItem(item: String, onItemClick: (String) -> Unit) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
-        ),
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clickable { onItemClick(item) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
-    )
-    {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+         modifier = Modifier.padding(8.dp)
+                            .fillMaxWidth()
+                            .clickable { onItemClick(item) },
+         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)){
         Row(verticalAlignment = Alignment.CenterVertically) {
             ImageLoader(item)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = item,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(8.dp)
-            )
+            Text(text = item,
+                 style = MaterialTheme.typography.headlineSmall,
+                 modifier = Modifier.padding(8.dp))
         }
     }
 }
