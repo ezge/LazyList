@@ -74,18 +74,13 @@ fun MainScreen( itemArray: Array<out String>, modifier: Modifier = Modifier) {
     }
 
     Box(modifier) {
-        LazyColumn(state = listState,
-                   contentPadding = PaddingValues(50.dp)) {
+        LazyColumn(state = listState, contentPadding = PaddingValues(50.dp)) {
             groupedItems.forEach { (manufacturer, models) ->
-                stickyHeader {
-                    Text(
-                        text = manufacturer,
-                        color = Color.White,
-                        modifier = Modifier
-                            .background(Color.Gray)
-                            .padding(5.dp)
-                            .fillMaxWidth()
-                    )
+                stickyHeader {Text(text = manufacturer,
+                                   color = Color.White,
+                                   modifier = Modifier.background(Color.Gray)
+                                                      .padding(5.dp)
+                                                      .fillMaxWidth())
                 }
                 items(models) { model ->
                     MyListItem(item = model, onItemClick = onListItemClick)
