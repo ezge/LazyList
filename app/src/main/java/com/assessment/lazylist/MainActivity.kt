@@ -27,6 +27,14 @@ import androidx.compose.foundation.lazy.items
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import kotlinx.coroutines.launch
+import androidx.compose.animation.AnimatedVisibility
 
 class MainActivity : ComponentActivity() {
     private var itemArray: Array<String>? = null
@@ -45,18 +53,60 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen( itemArray: Array<out String>, modifier: Modifier = Modifier) {
-    //ImageLoader("Plymouth GTX")
-    //MyListItem("Buick Roadmaster")
-
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    /*This is used when a state is created as the result of a calculation,
+      mainly when a state included in the calculation is subject
+      to changes outside the current composable. In this case, we are calculating
+      whether the firstVisibleIndex value of the LazyColumn composable is greater than 5.
+      When derivedStateOf is used, a cached version of the state is returned,
+      and the state is only recalculated when the listState value has changed.
+      This helps to prevent repeated calculations from being performed
+      unnecessarily and degrading app performance.*/
+    val displayButton = remember {derivedStateOf{ listState.firstVisibleItemIndex > 5 }}
     val context = LocalContext.current
+    val groupedItems = itemArray.groupBy { it.substringBefore(' ') }
     val onListItemClick = { text : String ->
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
-    LazyColumn(modifier) {
-        items(itemArray) { model ->
-            MyListItem(item = model, onItemClick = onListItemClick)
+
+    Box(modifier) {
+        LazyColumn(state = listState,
+                   contentPadding = PaddingValues(50.dp)) {
+            groupedItems.forEach { (manufacturer, models) ->
+                stickyHeader {
+                    Text(
+                        text = manufacturer,
+                        color = Color.White,
+                        modifier = Modifier
+                            .background(Color.Gray)
+                            .padding(5.dp)
+                            .fillMaxWidth()
+                    )
+                }
+                items(models) { model ->
+                    MyListItem(item = model, onItemClick = onListItemClick)
+                }
+            }
+        }
+        /*AnimatedVisibility composable controls the position and
+          visibility of the button so that it appears at the bottom
+          center of the screen and is only visible when displayButton
+          is true. it animates the hiding and showing of its child components. */
+        AnimatedVisibility(visible = displayButton.value,
+                           Modifier.align(Alignment.BottomCenter)) {
+            OutlinedButton(
+                onClick = { coroutineScope.launch { listState.scrollToItem(0) } },
+                border = BorderStroke(1.dp, Color.Gray),
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.DarkGray),
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(text = "Top")
+            }
         }
     }
 }
