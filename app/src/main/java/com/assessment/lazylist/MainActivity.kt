@@ -133,12 +133,10 @@ fun ImageLoader(item: String) {
     val url = "https://www.ebookfrenzy.com/book_examples/car_logos/" +
             item.substringBefore(" ") + "_logo.png"
 
-    Image(
-        painter = rememberAsyncImagePainter(url),
-        contentDescription = "car image",
-        contentScale = ContentScale.Fit,
-        modifier = Modifier.size(75.dp)
-    )
+    Image(painter = rememberAsyncImagePainter(url),
+          contentDescription = "car image",
+          contentScale = ContentScale.Fit,
+          modifier = Modifier.size(75.dp))
 }
 
 @Preview(showBackground = true)
